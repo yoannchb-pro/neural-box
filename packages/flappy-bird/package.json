@@ -1,0 +1,26 @@
+{
+  "name": "flappy-bird",
+  "version": "1.0.0",
+  "description": "Flappy bird deep learning AI",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoannchb-pro/neural-box.git"
+  },
+  "keywords": [
+    "flappy-bird",
+    "deep-learning",
+    "ai",
+    "javascript",
+    "typescript"
+  ],
+  "author": "yoannchb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yoannchb-pro/neural-box/issues"
+  },
+  "homepage": "https://github.com/yoannchb-pro/neural-box#readme"
+}
