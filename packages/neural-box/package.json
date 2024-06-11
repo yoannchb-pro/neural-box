@@ -1,0 +1,33 @@
+{
+  "name": "@yoannchb/neural-box",
+  "version": "1.0.0",
+  "buildName": "NeuralBox",
+  "description": "A neural network utility",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "/dist",
+    "package.json",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoannchb-pro/neural-box.git"
+  },
+  "keywords": [
+    "neural-network",
+    "network",
+    "deep-learning",
+    "javascript",
+    "typescript"
+  ],
+  "author": "yoannchb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yoannchb-pro/neural-box/issues"
+  },
+  "homepage": "https://github.com/yoannchb-pro/neural-box#readme"
+}
