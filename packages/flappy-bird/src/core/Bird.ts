@@ -30,7 +30,7 @@ export class Bird extends Sprite {
     if (this.isDead) return;
 
     // Check if we hit the ground
-    if (this.canvas.height - this.y + this.vy <= Base.BASE_SIZE) {
+    if (this.canvas.height - this.y <= Base.BASE_SIZE) {
       this.isDead = true;
       this.y = this.canvas.height - Base.BASE_SIZE;
       return;

@@ -74,10 +74,11 @@ function game() {
     const rndJump = Math.random() > 0.9;
     if (rndJump) bird.jump();
 
+    bird.update();
+
     bird.checkCollision(pipes);
     if (!bird.isDead) notAllBirdsDead = true;
 
-    bird.update();
     bird.draw();
   }
 
