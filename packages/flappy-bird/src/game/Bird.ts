@@ -57,6 +57,10 @@ export class Bird {
     }
   }
 
+  getFitness() {
+    return this.score;
+  }
+
   jump() {
     if (this.isDead) return;
 

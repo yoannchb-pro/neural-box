@@ -1,8 +1,8 @@
-import { Background } from './core/Background';
-import { Base } from './core/Base';
-import { Bird } from './core/Bird';
-import { Pipe } from './core/Pipe';
-import { Score } from './core/Score';
+import { Background } from './game/Background';
+import { Base } from './game/Base';
+import { Bird } from './game/Bird';
+import { Pipe } from './game/Pipe';
+import { Score } from './game/Score';
 
 const BIRDS_COUNT = 50;
 const FPS = 30;
