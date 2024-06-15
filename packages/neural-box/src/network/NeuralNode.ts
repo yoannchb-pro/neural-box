@@ -6,7 +6,7 @@ export enum NodeType {
   OUTPUT
 }
 
-export type Biais = {
+export type Bias = {
   mean?: number;
   stdDev?: number;
   min?: number;
@@ -14,29 +14,29 @@ export type Biais = {
 };
 
 type ConstructorProps = {
-  biais?: number | Biais;
+  bias?: number | Bias;
   nodeType: NodeType;
 };
 
 export class NeuralNode {
-  public value: number = 0;
-  public biais: number;
+  public output = 0;
+  public bias: number;
   public nodeType: NodeType;
 
   constructor(params: ConstructorProps) {
-    this.biais =
-      typeof params.biais === 'object' && !!params.biais
-        ? randomGaussian(params.biais.mean, params.biais.stdDev, params.biais.min, params.biais.max)
-        : params.biais ?? 0;
+    this.bias =
+      typeof params.bias === 'object' && !!params.bias
+        ? randomGaussian(params.bias.mean, params.bias.stdDev, params.bias.min, params.bias.max)
+        : params.bias ?? 0;
     this.nodeType = params.nodeType;
   }
 
   clone() {
     const copy = new NeuralNode({
-      biais: this.biais,
+      bias: this.bias,
       nodeType: this.nodeType
     });
-    copy.value = this.value;
+    copy.output = this.output;
     return copy;
   }
 }

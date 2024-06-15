@@ -21,9 +21,7 @@ export class Bird {
 
   public brain = new Network({
     inputLength: 3,
-    outputLength: 1,
-    hiddenLayers: 0,
-    hiddenLength: 0
+    outputLength: 1
   });
 
   public static BIRD_START_POSITION = 40;
@@ -36,7 +34,7 @@ export class Bird {
     this.ctx = params.ctx;
     this.y = this.canvas.height / 2;
 
-    this.brain.generateNetwork();
+    this.brain.generateFullNetwork();
   }
 
   checkCollision(pipes: Pipe[]) {

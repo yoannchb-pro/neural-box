@@ -1,16 +1,15 @@
 import { sigmoid } from '../utils/sigmoid';
 import { Connection } from './Connection';
-import { Biais, NeuralNode, NodeType } from './NeuralNode';
+import { Bias, NeuralNode, NodeType } from './NeuralNode';
 
 type ConstructorProps = {
   inputLength: number;
   outputLength: number;
-  hiddenLength: number[] | number;
-  hiddenLayers: number;
+  hiddenLength?: number[] | number;
+  hiddenLayers?: number;
 
-  biais?: Biais;
+  bias?: Bias;
   weightRange?: [number, number];
-  skipNetworkGeneration?: boolean;
 };
 
 export class Network {
@@ -19,7 +18,7 @@ export class Network {
   private hiddenLength: number[] | number;
   private hiddenLayers: number;
 
-  private biais: ConstructorProps['biais'];
+  private bias: ConstructorProps['bias'];
   private weightRange: ConstructorProps['weightRange'];
 
   private connections: Connection[] = [];
@@ -29,7 +28,7 @@ export class Network {
     this.inputLength = params.inputLength;
     this.outputLength = params.outputLength;
 
-    this.biais = params.biais;
+    this.bias = params.bias;
     this.weightRange = params.weightRange;
 
     if (Array.isArray(params.hiddenLength) && params.hiddenLength.length !== params.hiddenLayers) {
@@ -38,19 +37,17 @@ export class Network {
       );
     }
 
-    this.hiddenLayers = params.hiddenLayers;
-    this.hiddenLength = params.hiddenLength;
-
-    if (!params.skipNetworkGeneration) this.generateNetwork();
+    this.hiddenLayers = params.hiddenLayers ?? 0;
+    this.hiddenLength = params.hiddenLength ?? 0;
   }
 
-  generateNetwork() {
+  generateFullNetwork() {
     let nodesOfPrecedentLayer: NeuralNode[] = [];
 
     for (let i = 0; i < this.inputLength; ++i) {
       const input = new NeuralNode({
         nodeType: NodeType.INPUT,
-        biais: 0
+        bias: 0
       });
       nodesOfPrecedentLayer.push(input);
       this.nodes.push(input);
@@ -65,7 +62,7 @@ export class Network {
       for (let j = 0; j < hiddenLength; ++j) {
         const hidden = new NeuralNode({
           nodeType: NodeType.HIDDEN,
-          biais: this.biais
+          bias: this.bias
         });
 
         // We create the connection with the precedents nodes
@@ -88,7 +85,7 @@ export class Network {
     for (let i = 0; i < this.outputLength; ++i) {
       const output = new NeuralNode({
         nodeType: NodeType.OUTPUT,
-        biais: this.biais
+        bias: this.bias
       });
 
       // We create the connection with the precedents nodes
@@ -113,32 +110,36 @@ export class Network {
       throw new Error('Number of inputs must match the number of "inputLength".');
     }
 
-    // Set input values to input nodes
-    this.nodes
-      .filter(node => node.nodeType === NodeType.INPUT)
-      .forEach((node, index) => {
-        node.value = inputs[index];
-      });
+    const inputNodes = this.nodes.slice(0, this.inputLength);
+    const outputNodes = this.nodes.slice(this.nodes.length - this.outputLength);
+    const noneInputNodes = this.nodes.slice(this.inputLength); // Hiddens and Outputs nodes
 
-    // Process each layer
-    for (let i = 0; i < this.hiddenLayers + 1; i++) {
-      // +1 to include output layer
-      const nextLayerNodes = this.nodes.filter(
-        node => node.nodeType === (i < this.hiddenLayers ? NodeType.HIDDEN : NodeType.OUTPUT)
-      );
-
-      nextLayerNodes.forEach(node => {
-        node.value = 0; // Reset value
-        this.connections
-          .filter(connection => connection.to === node)
-          .forEach(connection => {
-            node.value += connection.from.value * connection.weight;
-          });
-        node.value = sigmoid(node.value + node.biais); // Apply activation function and bias
-      });
+    // We reset every output
+    for (const noneInputNode of noneInputNodes) {
+      noneInputNode.output = 0;
     }
 
-    return this.nodes.filter(node => node.nodeType === NodeType.OUTPUT).map(node => node.value);
+    // We set the inputs node zith the correct input value
+    for (let i = 0; i < inputNodes.length; ++i) {
+      inputNodes[i].output = inputs[i];
+    }
+
+    // For each connection we accumulate their contribution to the neuron
+    // A neuron can have multiple entry connection this is why its an addition
+    for (const connection of this.connections) {
+      const nodeDest = connection.to;
+      const contribution = connection.from.output * connection.weight;
+      nodeDest.output += contribution;
+    }
+
+    // After we have accumulate the connection contribution to the neuron we add the bias
+    // Then we apply the transformation function (expl: sigmoid)
+    for (const noneInputNode of noneInputNodes) {
+      noneInputNode.output += noneInputNode.bias;
+      noneInputNode.output = sigmoid(noneInputNode.output);
+    }
+
+    return outputNodes.map(node => node.output);
   }
 
   getConnections() {
@@ -162,8 +163,7 @@ export class Network {
       inputLength: this.inputLength,
       outputLength: this.outputLength,
       hiddenLayers: this.hiddenLayers,
-      hiddenLength: this.hiddenLength,
-      skipNetworkGeneration: true // So we don't make useless calcul
+      hiddenLength: this.hiddenLength
     });
 
     const connectionsCopy = [...this.getConnections().map(connection => connection.clone())];
