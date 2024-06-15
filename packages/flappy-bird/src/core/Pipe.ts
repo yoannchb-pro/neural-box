@@ -5,11 +5,13 @@ import { velocity } from './velocity';
 type ConstructorProps = {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
+  x: number;
 };
 
 export class Pipe {
-  private x: number;
-  private y: number = 0;
+  public x: number;
+  public width = 70;
+  public height: number;
 
   private spritedown = new Sprite('pipedown.png');
   private spriteup = new Sprite('pipeup.png');
@@ -17,18 +19,19 @@ export class Pipe {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
 
-  private static PIPE_DISTANCE = 150;
-  private static PIPE_RANGE = 150;
+  public static PIPE_DISTANCE = 150;
+  public static PIPE_RANGE = 250;
 
   constructor(params: ConstructorProps) {
     this.canvas = params.canvas;
     this.ctx = params.ctx;
 
-    this.x = this.canvas.width;
-    this.spritedown.sprite.onload = () => {
-      const spriteHeight = this.spritedown.sprite.height;
-      this.y = Math.random() * (this.canvas.height - Base.BASE_SIZE) - spriteHeight;
-    };
+    this.x = params.x;
+
+    this.height = Math.max(
+      Math.random() * this.canvas.height - Base.BASE_SIZE - Pipe.PIPE_DISTANCE * 1.5,
+      200
+    );
   }
 
   update() {
@@ -37,19 +40,31 @@ export class Pipe {
   }
 
   draw() {
-    const w = 75;
-    const h = this.canvas.height;
-
     // top
-    this.ctx.drawImage(this.spritedown.sprite, this.x, this.y, w, h);
+    this.ctx.drawImage(
+      this.spritedown.sprite,
+      0,
+      this.spriteup.sprite.height - this.height,
+      this.spriteup.sprite.width,
+      this.height,
+      this.x,
+      0,
+      this.width,
+      this.height
+    );
 
     // bottom
+    const bottomY = this.height + Pipe.PIPE_DISTANCE;
     this.ctx.drawImage(
       this.spriteup.sprite,
+      0,
+      0,
+      this.spritedown.sprite.width,
+      this.canvas.height - Base.BASE_SIZE - bottomY,
       this.x,
-      this.y + this.spritedown.sprite.height + Pipe.PIPE_DISTANCE,
-      w,
-      h
+      bottomY,
+      this.width,
+      this.canvas.height - Base.BASE_SIZE - bottomY
     );
   }
 }
