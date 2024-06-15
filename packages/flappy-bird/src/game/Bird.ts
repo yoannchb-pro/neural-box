@@ -2,6 +2,7 @@ import { Base } from './Base';
 import { Pipe } from './Pipe';
 import { Sprite } from './Sprite';
 import { velocity } from './velocity';
+import Network from '../../../neural-box/src';
 
 type ConstructorProps = {
   canvas: HTMLCanvasElement;
@@ -18,6 +19,13 @@ export class Bird {
   private rotation = 0;
   public isDead = false;
 
+  public brain = new Network({
+    inputLength: 3,
+    outputLength: 1,
+    hiddenLayers: 0,
+    hiddenLength: 0
+  });
+
   public static BIRD_START_POSITION = 40;
 
   private canvas: HTMLCanvasElement;
@@ -27,6 +35,8 @@ export class Bird {
     this.canvas = params.canvas;
     this.ctx = params.ctx;
     this.y = this.canvas.height / 2;
+
+    this.brain.generateNetwork();
   }
 
   checkCollision(pipes: Pipe[]) {
@@ -59,6 +69,10 @@ export class Bird {
 
   getFitness() {
     return this.score;
+  }
+
+  getY() {
+    return this.y;
   }
 
   jump() {

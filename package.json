@@ -26,19 +26,19 @@
     "url": "https://github.com/yoannchb-pro/neural-box/issues"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
     "@rollup/plugin-terser": "^0.4.4",
+    "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
+    "jest": "^29.7.0",
     "prettier": "^3.2.5",
     "rollup": "^4.13.0",
     "rollup-plugin-ts": "^3.4.5",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.3",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.2"
+    "typescript": "^5.4.3"
   },
   "homepage": "https://github.com/yoannchb-pro/neural-box#readme"
 }

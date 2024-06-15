@@ -121,7 +121,6 @@ export class Network {
       });
 
     // Process each layer
-    let currentLayerNodes = this.nodes.filter(node => node.nodeType === NodeType.INPUT);
     for (let i = 0; i < this.hiddenLayers + 1; i++) {
       // +1 to include output layer
       const nextLayerNodes = this.nodes.filter(
@@ -137,8 +136,6 @@ export class Network {
           });
         node.value = sigmoid(node.value + node.biais); // Apply activation function and bias
       });
-
-      currentLayerNodes = nextLayerNodes;
     }
 
     return this.nodes.filter(node => node.nodeType === NodeType.OUTPUT).map(node => node.value);

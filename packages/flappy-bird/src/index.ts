@@ -92,11 +92,13 @@ function game() {
   // Draw score
   score.draw();
 
-  // handle birds
+  // Handle birds
   let notAllBirdsDead = false;
+  const closerPipe = pipes.find(pipe => pipe.x > Bird.BIRD_START_POSITION)!;
   for (const bird of birds) {
-    const rndJump = Math.random() > 0.95;
-    if (rndJump) bird.jump();
+    const output = bird.brain.input([bird.getY(), closerPipe.x, closerPipe.height])[0];
+    const shouldJump = output > 0.5;
+    if (shouldJump) bird.jump();
 
     bird.update();
 
