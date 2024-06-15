@@ -94,7 +94,7 @@ function game() {
 
   // Handle birds
   let notAllBirdsDead = false;
-  const closerPipe = pipes.find(pipe => pipe.x > Bird.BIRD_START_POSITION)!;
+  const closerPipe = pipes.find(pipe => pipe.x + pipe.width > Bird.BIRD_START_POSITION)!;
   for (const bird of birds) {
     const output = bird.brain.input([bird.getY(), closerPipe.x, closerPipe.height])[0];
     const shouldJump = output > 0.5;
