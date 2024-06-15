@@ -6,7 +6,9 @@ type ConstructorProps = {
   ctx: CanvasRenderingContext2D;
 };
 
-export class Base extends Sprite {
+const BASE_SPRITE = new Sprite('base.png').sprite;
+
+export class Base {
   private x = 0;
 
   private canvas: HTMLCanvasElement;
@@ -15,7 +17,6 @@ export class Base extends Sprite {
   public static BASE_SIZE = 100;
 
   constructor(params: ConstructorProps) {
-    super(`base.png`);
     this.canvas = params.canvas;
     this.ctx = params.ctx;
   }
@@ -27,7 +28,7 @@ export class Base extends Sprite {
 
   draw() {
     this.ctx.drawImage(
-      this.sprite,
+      BASE_SPRITE,
       this.x,
       this.canvas.height - Base.BASE_SIZE,
       this.canvas.width,
@@ -35,7 +36,7 @@ export class Base extends Sprite {
     );
 
     this.ctx.drawImage(
-      this.sprite,
+      BASE_SPRITE,
       this.x + this.canvas.width,
       this.canvas.height - Base.BASE_SIZE,
       this.canvas.width,

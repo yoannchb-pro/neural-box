@@ -8,19 +8,22 @@ type ConstructorProps = {
   ctx: CanvasRenderingContext2D;
 };
 
-export class Bird extends Sprite {
+const BIRD_SPRITE = new Sprite('bird.png').sprite;
+
+export class Bird {
   private score = 0;
-  private x: number = 40;
+  private x: number = Bird.BIRD_START_POSITION;
   private y: number;
   private vy = 0;
   private rotation = 0;
   public isDead = false;
 
+  public static BIRD_START_POSITION = 40;
+
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
 
   constructor(params: ConstructorProps) {
-    super(`bird.png`);
     this.canvas = params.canvas;
     this.ctx = params.ctx;
     this.y = this.canvas.height / 2;
@@ -78,11 +81,11 @@ export class Bird extends Sprite {
     this.ctx.save();
 
     const rotation = this.rotation * (Math.PI / 180);
-    const x = this.x + this.sprite.width / 2;
+    const x = this.x + BIRD_SPRITE.width / 2;
 
     this.ctx.setTransform(1, 0, 0, 1, x, this.y);
     this.ctx.rotate(rotation);
-    this.ctx.drawImage(this.sprite, -this.sprite.width / 2, -this.sprite.height / 2);
+    this.ctx.drawImage(BIRD_SPRITE, -BIRD_SPRITE.width / 2, -BIRD_SPRITE.height / 2);
 
     this.ctx.restore();
   }

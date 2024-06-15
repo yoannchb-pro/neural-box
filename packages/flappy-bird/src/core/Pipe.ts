@@ -8,16 +8,18 @@ type ConstructorProps = {
   x: number;
 };
 
+const PIPEDOWN_SPRITE = new Sprite('pipedown.png').sprite;
+const PIPEUP_SPRITE = new Sprite('pipeup.png').sprite;
+
 export class Pipe {
   public x: number;
   public width = 70;
   public height: number;
 
-  private spritedown = new Sprite('pipedown.png');
-  private spriteup = new Sprite('pipeup.png');
-
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
+
+  public passed = false;
 
   public static PIPE_DISTANCE = 150;
   public static PIPE_RANGE = 250;
@@ -42,10 +44,10 @@ export class Pipe {
   draw() {
     // top
     this.ctx.drawImage(
-      this.spritedown.sprite,
+      PIPEDOWN_SPRITE,
       0,
-      this.spriteup.sprite.height - this.height,
-      this.spriteup.sprite.width,
+      PIPEDOWN_SPRITE.height - this.height,
+      PIPEDOWN_SPRITE.width,
       this.height,
       this.x,
       0,
@@ -56,10 +58,10 @@ export class Pipe {
     // bottom
     const bottomY = this.height + Pipe.PIPE_DISTANCE;
     this.ctx.drawImage(
-      this.spriteup.sprite,
+      PIPEUP_SPRITE,
       0,
       0,
-      this.spritedown.sprite.width,
+      PIPEUP_SPRITE.width,
       this.canvas.height - Base.BASE_SIZE - bottomY,
       this.x,
       bottomY,

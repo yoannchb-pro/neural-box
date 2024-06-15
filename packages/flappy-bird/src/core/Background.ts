@@ -5,17 +5,24 @@ type ConstructorProps = {
   ctx: CanvasRenderingContext2D;
 };
 
-export class Background extends Sprite {
+const BACKGROUND_SPRITE = new Sprite('background.png').sprite;
+
+export class Background {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
 
   constructor(params: ConstructorProps) {
-    super('background.png');
     this.canvas = params.canvas;
     this.ctx = params.ctx;
   }
 
   draw() {
-    this.ctx.drawImage(this.sprite, 0, 0, this.canvas.width, this.canvas.height - Base.BASE_SIZE);
+    this.ctx.drawImage(
+      BACKGROUND_SPRITE,
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height - Base.BASE_SIZE
+    );
   }
 }

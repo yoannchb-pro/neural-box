@@ -2,8 +2,10 @@ import { Background } from './core/Background';
 import { Base } from './core/Base';
 import { Bird } from './core/Bird';
 import { Pipe } from './core/Pipe';
+import { Score } from './core/Score';
 
 const BIRDS_COUNT = 50;
+const FPS = 30;
 
 const canvas = document.querySelector('canvas')!;
 const ctx = canvas.getContext('2d')!;
@@ -16,9 +18,16 @@ const base = new Base({
   canvas,
   ctx
 });
+const score = new Score({
+  canvas,
+  ctx
+});
 const pipes: Pipe[] = [];
 const birds: Bird[] = [];
 
+/**
+ * Init / Reset the game
+ */
 function initGame() {
   // Init pipes
   for (let i = 0; i < canvas.height; i += Pipe.PIPE_RANGE) {
@@ -39,11 +48,17 @@ function initGame() {
       })
     );
   }
+
+  score.reset();
 }
 
+/**
+ * Handle the game
+ */
 function game() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  // Backgrou drawing
   background.draw();
 
   // Handle pipes
@@ -51,6 +66,11 @@ function game() {
   for (const pipe of pipes) {
     pipe.update();
     pipe.draw();
+
+    if (!pipe.passed && pipe.x + pipe.width < Bird.BIRD_START_POSITION) {
+      pipe.passed = true;
+      score.increase();
+    }
 
     if (pipe.x + pipe.width < 0) {
       removePipe = true;
@@ -65,13 +85,17 @@ function game() {
   }
   if (removePipe) pipes.shift();
 
+  // Draw moving base
   base.update();
   base.draw();
+
+  // Draw score
+  score.draw();
 
   // handle birds
   let notAllBirdsDead = false;
   for (const bird of birds) {
-    const rndJump = Math.random() > 0.9;
+    const rndJump = Math.random() > 0.95;
     if (rndJump) bird.jump();
 
     bird.update();
@@ -90,4 +114,4 @@ function game() {
   }
 }
 
-setInterval(game, 1000 / 30);
+setInterval(game, 1000 / FPS);
