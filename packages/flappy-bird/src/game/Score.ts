@@ -7,7 +7,7 @@ type ConstructorProps = {
 
 const SCORES_SPRITES: HTMLImageElement[] = [];
 
-for (let i = 0; i < 9; ++i) {
+for (let i = 0; i < 10; ++i) {
   const sprite = new Sprite(`${i}.png`);
   SCORES_SPRITES.push(sprite.sprite);
 }
@@ -36,7 +36,7 @@ export class Score {
     const scoreNumbers = strScore.split('');
 
     for (let i = 0; i < scoreNumbers.length; ++i) {
-      const number = parseInt(scoreNumbers[i]);
+      const number = Number(scoreNumbers[i]);
       const numberSprite = SCORES_SPRITES[number];
       this.ctx.drawImage(
         numberSprite,

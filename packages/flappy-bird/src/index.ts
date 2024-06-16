@@ -96,7 +96,11 @@ function game() {
   let notAllBirdsDead = false;
   const closerPipe = pipes.find(pipe => pipe.x + pipe.width > Bird.BIRD_START_POSITION)!;
   for (const bird of birds) {
-    const output = bird.brain.input([bird.getY(), closerPipe.x, closerPipe.height])[0];
+    const pipeXDistance = closerPipe.x - Bird.BIRD_START_POSITION;
+    const pipeUpY = closerPipe.height;
+    const pipeBottomY = closerPipe.height + Pipe.PIPE_DISTANCE;
+
+    const output = bird.brain.input([bird.getY(), pipeXDistance, pipeUpY, pipeBottomY])[0];
     const shouldJump = output > 0.5;
     if (shouldJump) bird.jump();
 
@@ -110,10 +114,21 @@ function game() {
 
   // When all birds are dead we reset the game
   if (!notAllBirdsDead) {
+    birds.sort((a, b) => b.getFitness() - a.getFitness());
+    const bestBird = birds[0];
+
     pipes.length = 0;
     birds.length = 0;
     initGame();
+
+    const bestBirdReplication = new Bird({
+      canvas,
+      ctx
+    });
+    bestBirdReplication.brain = bestBird.brain;
+    birds.push(bestBirdReplication);
   }
 }
 
+initGame();
 setInterval(game, 1000 / FPS);

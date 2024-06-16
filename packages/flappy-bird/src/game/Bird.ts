@@ -20,7 +20,7 @@ export class Bird {
   public isDead = false;
 
   public brain = new Network({
-    inputLength: 3,
+    inputLength: 4,
     outputLength: 1
   });
 
@@ -82,7 +82,7 @@ export class Bird {
 
   update() {
     if (this.isDead) {
-      this.x -= velocity;
+      if (this.x > -BIRD_SPRITE.width) this.x -= velocity;
       return;
     }
 
