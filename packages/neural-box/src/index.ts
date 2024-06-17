@@ -1,3 +1,4 @@
+import { NeatAlgo } from './neat/NeatAlgo';
 import { Network } from './network/Network';
 
-export default Network;
+export { Network, NeatAlgo };

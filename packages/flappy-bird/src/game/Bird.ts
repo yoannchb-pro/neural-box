@@ -2,7 +2,7 @@ import { Base } from './Base';
 import { Pipe } from './Pipe';
 import { Sprite } from './Sprite';
 import { velocity } from './velocity';
-import Network from '../../../neural-box/src';
+import { Network } from '../../../neural-box/src';
 
 type ConstructorProps = {
   canvas: HTMLCanvasElement;

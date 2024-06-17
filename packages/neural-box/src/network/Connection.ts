@@ -8,17 +8,45 @@ type ConstructorProps = {
   weightRange?: [number, number];
 };
 
+class InnovationNumberManager {
+  private static currentInnovationNumber = 0;
+  private static innovationHistory: Map<string, number> = new Map();
+
+  static getInnovationNumber(fromNodeId: number, toNodeId: number): number {
+    const key = `${fromNodeId}-${toNodeId}`;
+
+    if (this.innovationHistory.has(key)) {
+      return this.innovationHistory.get(key)!;
+    }
+
+    const newInnovationNumber = this.currentInnovationNumber++;
+    this.innovationHistory.set(key, newInnovationNumber);
+    return newInnovationNumber;
+  }
+}
+
 export class Connection {
+  public innovationNumber: number;
   public from: NeuralNode;
   public to: NeuralNode;
   public weight: number;
+  public enbaled = true;
+
+  public static DEFAULT_WEIGHT_RANGE = [-0.5, 0.5];
 
   constructor(params: ConstructorProps) {
+    this.innovationNumber = InnovationNumberManager.getInnovationNumber(
+      params.from.id,
+      params.to.id
+    );
     this.from = params.from;
     this.to = params.to;
     this.weight =
       params.weight ??
-      randomUniform(params.weightRange?.[0] ?? -0.5, params.weightRange?.[1] ?? 0.5);
+      randomUniform(
+        params.weightRange?.[0] ?? Connection.DEFAULT_WEIGHT_RANGE[0],
+        params.weightRange?.[1] ?? Connection.DEFAULT_WEIGHT_RANGE[1]
+      );
   }
 
   clone() {

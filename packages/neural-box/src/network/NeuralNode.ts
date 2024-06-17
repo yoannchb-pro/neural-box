@@ -14,16 +14,19 @@ export type Bias = {
 };
 
 type ConstructorProps = {
+  id: number;
   bias?: number | Bias;
   nodeType: NodeType;
 };
 
 export class NeuralNode {
+  public id: number;
   public output = 0;
   public bias: number;
   public nodeType: NodeType;
 
   constructor(params: ConstructorProps) {
+    this.id = params.id;
     this.bias =
       typeof params.bias === 'object' && !!params.bias
         ? randomGaussian(params.bias.mean, params.bias.stdDev, params.bias.min, params.bias.max)
@@ -33,6 +36,7 @@ export class NeuralNode {
 
   clone() {
     const copy = new NeuralNode({
+      id: this.id,
       bias: this.bias,
       nodeType: this.nodeType
     });
