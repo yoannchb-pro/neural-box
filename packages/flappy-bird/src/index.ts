@@ -4,11 +4,17 @@ import { Bird } from './game/Bird';
 import { Pipe } from './game/Pipe';
 import { Score } from './game/Score';
 
-const BIRDS_COUNT = 50;
+let BIRDS_COUNT = 50;
 const FPS = 30;
+let SPEED = 1;
+let GAME_CLOCK: NodeJS.Timeout;
 
 const canvas = document.querySelector('canvas')!;
 const ctx = canvas.getContext('2d')!;
+const speedSettings = document.querySelector('#speed-container')!;
+const birdsCountSettings = document.querySelector('#birds-count-container')!;
+const generation = document.querySelector('#generation')!;
+const bestScore = document.querySelector('#best-score')!;
 
 const background = new Background({
   canvas,
@@ -29,6 +35,10 @@ const birds: Bird[] = [];
  * Init / Reset the game
  */
 function initGame() {
+  // Set the generation and best score
+  generation.textContent = String(Number(generation.textContent) + 1);
+  bestScore.textContent = String(Math.max(Number(bestScore.textContent), score.getScore()));
+
   // Init pipes
   for (let i = 0; i < canvas.height; i += Pipe.PIPE_RANGE) {
     const pipe = new Pipe({
@@ -130,5 +140,19 @@ function game() {
   }
 }
 
+// Settings
+birdsCountSettings.addEventListener('click', () => {
+  const selectedBtn = birdsCountSettings.querySelector('input:checked') as HTMLInputElement;
+  BIRDS_COUNT = Number(selectedBtn.value);
+});
+
+speedSettings.addEventListener('click', () => {
+  const selectedBtn = speedSettings.querySelector('input:checked') as HTMLInputElement;
+  SPEED = Number(selectedBtn.value);
+  clearInterval(GAME_CLOCK);
+  GAME_CLOCK = setInterval(game, 1000 / FPS / SPEED);
+});
+
+// Init and start game
 initGame();
-setInterval(game, 1000 / FPS);
+GAME_CLOCK = setInterval(game, 1000 / FPS / SPEED);

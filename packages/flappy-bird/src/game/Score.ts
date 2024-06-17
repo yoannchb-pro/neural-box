@@ -23,6 +23,10 @@ export class Score {
     this.ctx = params.ctx;
   }
 
+  getScore() {
+    return this.score;
+  }
+
   reset() {
     this.score = 0;
   }

@@ -4,10 +4,77 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flappy Bird AI</title>
+    <link rel="icon" type="image/png" href="./icon.png" />
     <link rel="stylesheet" href="style.css" />
     <script src="./dist/index.js" defer></script>
   </head>
   <body>
-    <canvas width="500" height="800"></canvas>
+    <main>
+      <canvas width="500" height="800"></canvas>
+      <section class="column gxl">
+        <div class="column gs">
+          <h4>Best score: <span id="best-score">0</span></h4>
+          <h4>Generation: <span id="generation">0</span></h4>
+        </div>
+        <div class="column gs">
+          <h4>Speed:</h4>
+          <div class="line gs" id="speed-container">
+            <div class="line">
+              <input id="speed-1" type="radio" name="speed" value="1" checked />
+              <label for="speed-1">x1</label>
+            </div>
+            <div class="line">
+              <input id="speed-2" type="radio" name="speed" value="2" />
+              <label for="speed-2">x2</label>
+            </div>
+            <div class="line">
+              <input id="speed-5" type="radio" name="speed" value="5" />
+              <label for="speed-5">x5</label>
+            </div>
+            <div class="line">
+              <input id="speed-50" type="radio" name="speed" value="50" />
+              <label for="speed-50">x50</label>
+            </div>
+            <div class="line">
+              <input id="speed-100" type="radio" name="speed" value="100" />
+              <label for="speed-100">x100</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="column gs" id="birds-count-container">
+          <h4>Birds count (apply on next genration):</h4>
+          <div class="line gs">
+            <div class="line">
+              <input id="birds-count-1" type="radio" name="birds-count" value="1" />
+              <label for="birds-count-1">x1</label>
+            </div>
+            <div class="line">
+              <input id="birds-count-5" type="radio" name="birds-count" value="5" />
+              <label for="birds-count-5">x5</label>
+            </div>
+            <div class="line">
+              <input id="birds-count-25" type="radio" name="birds-count" value="25" />
+              <label for="birds-count-25">x25</label>
+            </div>
+            <div class="line">
+              <input id="birds-count-50" type="radio" name="birds-count" value="50" checked />
+              <label for="birds-count-50">x50</label>
+            </div>
+            <div class="line">
+              <input id="birds-count-100" type="radio" name="birds-count" value="100" />
+              <label for="birds-count-100">x100</label>
+            </div>
+          </div>
+        </div>
+
+        <textarea name="model" id="model" readonly></textarea>
+
+        <div class="line gn">
+          <button>Save model</button>
+          <button>Load model</button>
+        </div>
+      </section>
+    </main>
   </body>
 </html>
