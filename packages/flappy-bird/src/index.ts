@@ -6,7 +6,7 @@ import { Score } from './game/Score';
 
 let BIRDS_COUNT = 50;
 const FPS = 30;
-let SPEED = 1;
+let SPEED = 2;
 let GAME_CLOCK: NodeJS.Timeout;
 
 const canvas = document.querySelector('canvas')!;

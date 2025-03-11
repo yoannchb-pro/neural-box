@@ -22,6 +22,7 @@ jobs:
 
       - name: Build and deploy
         run: |
+          npm run fastBuild
           mkdir -p public
           cp -r packages/flappy-bird/* public/
           touch public/.nojekyll
