@@ -27,6 +27,7 @@ class InnovationNumberManager {
 
 export class Connection {
   public innovationNumber: number;
+
   public from: NeuralNode;
   public to: NeuralNode;
   public weight: number;
