@@ -69,7 +69,8 @@ function initGame(bestBirdBrain?: Network) {
   }
   for (let i = 0; i < numberOfBirds; ++i) {
     let brain: Network | undefined = undefined;
-    if (bestBirdBrain) {
+    // we want to generate some random birds too
+    if (bestBirdBrain && i % 10 !== 0) {
       brain = bestBirdBrain.clone();
       neat.mutate(brain);
     }
