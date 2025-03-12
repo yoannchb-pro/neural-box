@@ -26,7 +26,7 @@ const defaultMutationsChances: Required<ConstructorParams['mutationsChances']> =
 export class NeatAlgo {
   private mutationsChances: Required<Required<ConstructorParams>['mutationsChances']>;
 
-  constructor(params: ConstructorParams) {
+  constructor(params: ConstructorParams = {}) {
     this.mutationsChances = Object.assign({}, defaultMutationsChances, params.mutationsChances);
   }
 
@@ -38,7 +38,7 @@ export class NeatAlgo {
 
     // Weight modification
     if (Math.random() <= this.mutationsChances.weightModification && connections.length > 0) {
-      const rndConnection = randomUniform(0, connections.length);
+      const rndConnection = Math.floor(randomUniform(0, connections.length));
       const [minWeight, maxWeight] = network.getWeightRange();
       const newWeight = randomUniform(minWeight, maxWeight);
       connections[rndConnection].weight = newWeight;
@@ -51,34 +51,34 @@ export class NeatAlgo {
 
     // Remove connection
     if (Math.random() <= this.mutationsChances.removeConnection && connections.length > 0) {
-      const rndConnection = randomUniform(0, connections.length);
+      const rndConnection = Math.floor(randomUniform(0, connections.length));
       network.removeConnection(connections[rndConnection]);
     }
 
     // New node
     if (Math.random() <= this.mutationsChances.newNode && connections.length > 0) {
-      const rndConnection = randomUniform(0, connections.length);
+      const rndConnection = Math.floor(randomUniform(0, connections.length));
       network.addNodeInConnection(connections[rndConnection]);
     }
 
     // Remove node
     if (Math.random() <= this.mutationsChances.removeNode && nodes.length > 0) {
-      const rndNode = randomUniform(0, nodes.length);
+      const rndNode = Math.floor(randomUniform(0, nodes.length));
       network.removeNode(nodes[rndNode]);
     }
 
     // Disable connection
     if (Math.random() <= this.mutationsChances.disableConnection && connections.length > 0) {
-      const rndConnection = randomUniform(0, connections.length);
-      connections[rndConnection].enbaled = false;
+      const rndConnection = Math.floor(randomUniform(0, connections.length));
+      connections[rndConnection].enabled = false;
     }
 
     // Enable connection
     if (Math.random() <= this.mutationsChances.enableConnection) {
-      const disabledConnections = connections.filter(connection => !connection.enbaled);
+      const disabledConnections = connections.filter(connection => !connection.enabled);
       if (disabledConnections.length > 0) {
-        const rndConnection = randomUniform(0, disabledConnections.length);
-        disabledConnections[rndConnection].enbaled = true;
+        const rndConnection = Math.floor(randomUniform(0, disabledConnections.length));
+        disabledConnections[rndConnection].enabled = true;
       }
     }
   }

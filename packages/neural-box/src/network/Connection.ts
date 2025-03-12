@@ -8,6 +8,14 @@ type ConstructorProps = {
   weightRange?: [number, number];
 };
 
+export type ConenctionJson = {
+  innovationNumber: number;
+  fromId: number;
+  toId: number;
+  weight: number;
+  enabled: boolean;
+};
+
 class InnovationNumberManager {
   private static currentInnovationNumber = 0;
   private static innovationHistory: Map<string, number> = new Map();
@@ -31,7 +39,7 @@ export class Connection {
   public from: NeuralNode;
   public to: NeuralNode;
   public weight: number;
-  public enbaled = true;
+  public enabled = true;
 
   public static DEFAULT_WEIGHT_RANGE = [-0.5, 0.5];
 
@@ -50,12 +58,23 @@ export class Connection {
       );
   }
 
+  toJson(): ConenctionJson {
+    return {
+      innovationNumber: this.innovationNumber,
+      enabled: this.enabled,
+      fromId: this.from.id,
+      toId: this.to.id,
+      weight: this.weight
+    };
+  }
+
   clone() {
     const copy = new Connection({
       from: this.from,
       to: this.to,
       weight: this.weight
     });
+    copy.enabled = this.enabled;
     return copy;
   }
 }

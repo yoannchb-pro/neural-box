@@ -1,7 +1,18 @@
 import { randomUniform } from '../utils/randomUniform';
 import { sigmoid } from '../utils/sigmoid';
-import { Connection } from './Connection';
-import { NeuralNode, NodeType } from './NeuralNode';
+import { ConenctionJson, Connection } from './Connection';
+import { NeuralNode, NeuralNodeJson, NodeType } from './NeuralNode';
+
+type NetworkJson = {
+  inputLength: number;
+  outputLength: number;
+  hiddenLength: number[];
+  hiddenLayers: number;
+  weightRange?: [number, number];
+
+  connections: ConenctionJson[];
+  nodes: NeuralNodeJson[];
+};
 
 type ConstructorProps = {
   inputLength: number;
@@ -24,8 +35,8 @@ export class Network {
 
   private weightRange: ConstructorProps['weightRange'];
 
-  private connections: Connection[] = [];
-  private nodes: NeuralNode[] = [];
+  public connections: Connection[] = [];
+  public nodes: NeuralNode[] = [];
 
   constructor(params: ConstructorProps) {
     this.inputLength = params.inputLength;
@@ -33,14 +44,26 @@ export class Network {
 
     this.weightRange = params.weightRange;
 
-    if (Array.isArray(params.hiddenLength) && params.hiddenLength.length !== params.hiddenLayers) {
+    if (params.hiddenLength && params.hiddenLength.length !== params.hiddenLayers) {
       throw new Error(
-        `Invalide parameter "hiddenLength" (should be an array of the same size as "hiddenLayers").`
+        `Invalide parameter "hiddenLength": ${params.hiddenLength.length} (should be an array of the same size as "hiddenLayers": ${params.hiddenLayers}).`
       );
     }
 
     this.hiddenLayers = params.hiddenLayers ?? 0;
-    this.hiddenLength = params.hiddenLength ?? [0];
+    this.hiddenLength = params.hiddenLength ?? [];
+  }
+
+  toJson(): NetworkJson {
+    return {
+      connections: this.connections.map(c => c.toJson()),
+      hiddenLayers: this.hiddenLayers,
+      hiddenLength: this.hiddenLength,
+      inputLength: this.inputLength,
+      nodes: this.nodes.map(n => n.toJson()),
+      outputLength: this.outputLength,
+      weightRange: this.weightRange
+    };
   }
 
   /**
@@ -220,8 +243,8 @@ export class Network {
     const maxAttempts = this.nodes.length * this.nodes.length; // A simple upper limit based on the number of possible connections
 
     while (attemptCount < maxAttempts) {
-      const fromIndex = randomUniform(0, this.nodes.length);
-      const toIndex = randomUniform(0, this.nodes.length);
+      const fromIndex = Math.floor(randomUniform(0, this.nodes.length));
+      const toIndex = Math.floor(randomUniform(0, this.nodes.length));
 
       if (fromIndex === toIndex) {
         attemptCount++;
@@ -279,14 +302,22 @@ export class Network {
       inputLength: this.inputLength,
       outputLength: this.outputLength,
       hiddenLayers: this.hiddenLayers,
-      hiddenLength: this.hiddenLength
+      hiddenLength: this.hiddenLength,
+      weightRange: this.weightRange
     });
-
-    const connectionsCopy = [...this.getConnections().map(connection => connection.clone())];
-    copy.setConnections(connectionsCopy);
 
     const nodesCopy = [...this.getNodes().map(node => node.clone())];
     copy.setNodes(nodesCopy);
+
+    const connectionsCopy = [
+      ...this.getConnections().map(connection => {
+        const clone = connection.clone();
+        clone.from = nodesCopy.find(n => n.id === clone.from.id)!;
+        clone.to = nodesCopy.find(n => n.id === clone.to.id)!;
+        return clone;
+      })
+    ];
+    copy.setConnections(connectionsCopy);
 
     return copy;
   }

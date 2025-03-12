@@ -5,6 +5,11 @@ export enum NodeType {
   BIAS
 }
 
+export type NeuralNodeJson = {
+  id: number;
+  nodeType: NodeType;
+};
+
 type ConstructorProps = {
   id: number;
   nodeType: NodeType;
@@ -21,12 +26,18 @@ export class NeuralNode {
     if (this.nodeType === NodeType.BIAS) this.output = 1;
   }
 
+  toJson(): NeuralNodeJson {
+    return {
+      id: this.id,
+      nodeType: this.nodeType
+    };
+  }
+
   clone() {
     const copy = new NeuralNode({
       id: this.id,
       nodeType: this.nodeType
     });
-    copy.output = this.output;
     return copy;
   }
 }
