@@ -59,7 +59,7 @@ export function drawNeuralNetwork(json: NetworkJson, canvas: HTMLCanvasElement) 
 
     ctx.fillStyle =
       node.nodeType === NodeType.BIAS
-        ? 'grey' //
+        ? 'grey'
         : node.nodeType === NodeType.HIDDEN
           ? 'orange'
           : node.nodeType === NodeType.INPUT

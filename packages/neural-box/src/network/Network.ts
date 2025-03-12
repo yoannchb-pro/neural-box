@@ -197,16 +197,27 @@ export class Network {
       throw new Error('Number of inputs must match the number of "inputLength".');
     }
 
-    const inputNodes = this.nodes.filter(node => node.nodeType === NodeType.INPUT);
-    const outputNodes = this.nodes.filter(node => node.nodeType === NodeType.OUTPUT);
+    const inputNodes: NeuralNode[] = [];
+    const outputNodes: NeuralNode[] = [];
+    const inputsToCalculates: NeuralNode[] = [];
 
-    const inputsToReset = this.nodes.filter(
-      node => node.nodeType !== NodeType.INPUT && node.nodeType !== NodeType.BIAS
-    );
-    const noneInputNodes = this.nodes.filter(node => node.nodeType !== NodeType.INPUT);
+    for (const node of this.nodes) {
+      switch (node.nodeType) {
+        case NodeType.INPUT:
+          inputNodes.push(node);
+          break;
+        case NodeType.OUTPUT:
+          outputNodes.push(node);
+          break;
+      }
+
+      if (node.nodeType !== NodeType.BIAS && node.nodeType !== NodeType.INPUT) {
+        inputsToCalculates.push(node);
+      }
+    }
 
     // We reset the hiddens/output nodes
-    for (const inputToReset of inputsToReset) {
+    for (const inputToReset of inputsToCalculates) {
       inputToReset.output = 0;
     }
 
@@ -218,6 +229,8 @@ export class Network {
     // For each connection we accumulate their contribution to the neuron
     // A neuron can have multiple entry connection this is why its an addition
     for (const connection of this.connections) {
+      if (!connection.enabled) continue;
+
       const nodeDest = connection.to;
       const contribution = connection.from.output * connection.weight;
       nodeDest.output += contribution;
@@ -225,8 +238,8 @@ export class Network {
 
     // After we have accumulate the connection contribution to the neuron we add the bias
     // Then we apply the transformation function (expl: sigmoid)
-    for (const noneInputNode of noneInputNodes) {
-      noneInputNode.output = sigmoid(noneInputNode.output);
+    for (const node of inputNodes) {
+      node.output = sigmoid(node.output);
     }
 
     return outputNodes.map(node => node.output);
@@ -300,9 +313,11 @@ export class Network {
       const from = this.nodes[fromIndex];
       const to = this.nodes[toIndex];
 
-      const connectionExist = this.connections.some(con => con.from === from && con.to === con.to);
+      const connectionExist = this.connections.some(
+        con => con.from.id === from.id && con.to.id === to.id
+      );
 
-      if (from.layer === to.layer || connectionExist) {
+      if (connectionExist || from.layer === to.layer) {
         attemptCount++;
         continue;
       }
