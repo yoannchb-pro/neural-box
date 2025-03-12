@@ -54,6 +54,39 @@ export class Network {
     this.hiddenLength = params.hiddenLength ?? [];
   }
 
+  static fromJson(json: NetworkJson): Network {
+    const network = new Network({
+      inputLength: json.inputLength,
+      outputLength: json.outputLength,
+      hiddenLayers: json.hiddenLayers,
+      hiddenLength: json.hiddenLength,
+      weightRange: json.weightRange
+    });
+
+    for (const node of json.nodes) {
+      network.nodes.push(
+        new NeuralNode({
+          id: node.id,
+          nodeType: node.nodeType
+        })
+      );
+    }
+
+    for (const connection of json.connections) {
+      const from = network.nodes.find(n => n.id === connection.fromId)!;
+      const to = network.nodes.find(n => n.id === connection.toId)!;
+      const con = new Connection({
+        from,
+        to,
+        weight: connection.weight,
+        weightRange: json.weightRange
+      });
+      network.connections.push(con);
+    }
+
+    return network;
+  }
+
   toJson(): NetworkJson {
     return {
       connections: this.connections.map(c => c.toJson()),

@@ -7,8 +7,8 @@ import { Pipe } from './game/Pipe';
 import { Score } from './game/Score';
 
 let BIRDS_COUNT = 50;
-const FPS = 30;
-let SPEED = 2;
+const FPS = 60;
+let SPEED = 1;
 let GAME_CLOCK: NodeJS.Timeout;
 
 const canvas = document.querySelector('canvas')!;
@@ -18,6 +18,8 @@ const birdsCountSettings = document.querySelector('#birds-count-container')!;
 const generation = document.querySelector('#generation')!;
 const bestScore = document.querySelector('#best-score')!;
 const model = document.querySelector('#model') as HTMLTextAreaElement;
+const loadModelBtn = document.querySelector('#load-btn')!;
+const loadModelTextarea = document.querySelector('#model-to-load') as HTMLTextAreaElement;
 
 const neat = new NeatAlgo();
 const background = new Background({
@@ -82,6 +84,22 @@ function initGame(bestBirdBrain?: Network) {
 }
 
 /**
+ * Get the best network
+ */
+function getBestNetwork() {
+  birds.sort((a, b) => b.getFitness() - a.getFitness());
+  const bestBird = birds[0];
+  return bestBird.brain;
+}
+
+/**
+ * Update the best model
+ */
+function updateBestModel() {
+  model.value = JSON.stringify(getBestNetwork().toJson());
+}
+
+/**
  * Handle the game
  */
 function game() {
@@ -141,17 +159,16 @@ function game() {
     bird.draw();
   }
 
+  updateBestModel();
+
   // When all birds are dead we reset the game
   if (!notAllBirdsDead) {
-    birds.sort((a, b) => b.getFitness() - a.getFitness());
-    const bestBird = birds[0];
+    const bestNetwork = getBestNetwork();
 
     pipes.length = 0;
     birds.length = 0;
 
-    initGame(bestBird.brain);
-
-    model.value = JSON.stringify(bestBird.brain.toJson());
+    initGame(bestNetwork);
   }
 }
 
@@ -168,6 +185,22 @@ speedSettings.addEventListener('click', () => {
   GAME_CLOCK = setInterval(game, 1000 / FPS / SPEED);
 });
 
+// Update model
+loadModelBtn.addEventListener('click', () => {
+  try {
+    const networkJson = JSON.parse(loadModelTextarea.value);
+    loadModelTextarea.value = '';
+    const network = Network.fromJson(networkJson);
+    pipes.length = 0;
+    birds.length = 0;
+    initGame(network);
+  } catch (e: any) {
+    console.error(e);
+    loadModelTextarea.value = e;
+  }
+});
+
 // Init and start game
 initGame();
+
 GAME_CLOCK = setInterval(game, 1000 / FPS / SPEED);
