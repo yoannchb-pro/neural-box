@@ -65,16 +65,27 @@ export class NeatAlgo {
 
     // Disable connection
     if (Math.random() <= this.mutationsChances.disableConnection && connections.length > 0) {
-      const rndConnection = Math.floor(randomUniform(0, connections.length));
-      connections[rndConnection].enabled = false;
+      const noBiasConnections = connections.filter(
+        con => con.from.nodeType !== NodeType.BIAS && con.to.nodeType !== NodeType.BIAS
+      );
+
+      if (noBiasConnections.length > 0) {
+        const rndConnection = Math.floor(randomUniform(0, noBiasConnections.length));
+        noBiasConnections[rndConnection].enabled = false;
+      }
     }
 
     // Enable connection
     if (Math.random() <= this.mutationsChances.enableConnection) {
       const disabledConnections = connections.filter(connection => !connection.enabled);
-      if (disabledConnections.length > 0) {
-        const rndConnection = Math.floor(randomUniform(0, disabledConnections.length));
-        disabledConnections[rndConnection].enabled = true;
+
+      const noBiasDisabledConnections = disabledConnections.filter(
+        con => con.from.nodeType !== NodeType.BIAS && con.to.nodeType !== NodeType.BIAS
+      );
+
+      if (noBiasDisabledConnections.length > 0) {
+        const rndConnection = Math.floor(randomUniform(0, noBiasDisabledConnections.length));
+        noBiasDisabledConnections[rndConnection].enabled = true;
       }
     }
   }
