@@ -7,6 +7,7 @@ import { Network } from '../../../neural-box/src';
 type ConstructorProps = {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
+  brain?: Network;
 };
 
 const BIRD_SPRITE = new Sprite('bird.png').sprite;
@@ -19,10 +20,7 @@ export class Bird {
   private rotation = 0;
   public isDead = false;
 
-  public brain = new Network({
-    inputLength: 4,
-    outputLength: 1
-  });
+  public brain: Network;
 
   public static BIRD_START_POSITION = 40;
 
@@ -34,7 +32,15 @@ export class Bird {
     this.ctx = params.ctx;
     this.y = this.canvas.height / 2;
 
-    this.brain.generateFullNetwork();
+    if (params.brain) {
+      this.brain = params.brain;
+    } else {
+      this.brain = new Network({
+        inputLength: 4,
+        outputLength: 1
+      });
+      this.brain.generateFullNetwork();
+    }
   }
 
   checkCollision(pipes: Pipe[]) {

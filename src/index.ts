@@ -1,3 +1,5 @@
+import { NeatAlgo } from '../../neural-box/src';
+import { Network } from '../../neural-box/src';
 import { Background } from './game/Background';
 import { Base } from './game/Base';
 import { Bird } from './game/Bird';
@@ -15,7 +17,9 @@ const speedSettings = document.querySelector('#speed-container')!;
 const birdsCountSettings = document.querySelector('#birds-count-container')!;
 const generation = document.querySelector('#generation')!;
 const bestScore = document.querySelector('#best-score')!;
+const model = document.querySelector('#model') as HTMLTextAreaElement;
 
+const neat = new NeatAlgo();
 const background = new Background({
   canvas,
   ctx
@@ -34,7 +38,7 @@ const birds: Bird[] = [];
 /**
  * Init / Reset the game
  */
-function initGame() {
+function initGame(bestBirdBrain?: Network) {
   // Set the generation and best score
   generation.textContent = String(Number(generation.textContent) + 1);
   bestScore.textContent = String(Math.max(Number(bestScore.textContent), score.getScore()));
@@ -49,14 +53,28 @@ function initGame() {
     pipes.push(pipe);
   }
 
+  const createBird = (brain?: Network) =>
+    new Bird({
+      canvas,
+      ctx,
+      brain
+    });
+
   // Init birds
-  for (let i = 0; i < BIRDS_COUNT; ++i) {
-    birds.push(
-      new Bird({
-        canvas,
-        ctx
-      })
-    );
+  let numberOfBirds = BIRDS_COUNT;
+  if (bestBirdBrain) {
+    const bird = createBird(bestBirdBrain.clone());
+    birds.push(bird);
+    numberOfBirds -= 1;
+  }
+  for (let i = 0; i < numberOfBirds; ++i) {
+    let brain: Network | undefined = undefined;
+    if (bestBirdBrain) {
+      brain = bestBirdBrain.clone();
+      neat.mutate(brain);
+    }
+    const bird = createBird(brain);
+    birds.push(bird);
   }
 
   score.reset();
@@ -129,14 +147,10 @@ function game() {
 
     pipes.length = 0;
     birds.length = 0;
-    initGame();
 
-    const bestBirdReplication = new Bird({
-      canvas,
-      ctx
-    });
-    bestBirdReplication.brain = bestBird.brain;
-    birds.push(bestBirdReplication);
+    initGame(bestBird.brain);
+
+    model.value = JSON.stringify(bestBird.brain.toJson());
   }
 }
 
