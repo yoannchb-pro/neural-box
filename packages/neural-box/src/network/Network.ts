@@ -24,7 +24,7 @@ type ConstructorProps = {
 };
 
 export class Network {
-  private currentNodeId = 0;
+  public currentNodeId = 0;
 
   public fitness: number = 0;
 
@@ -63,6 +63,7 @@ export class Network {
       weightRange: json.weightRange
     });
 
+    let maxId = 0;
     for (const node of json.nodes) {
       network.nodes.push(
         new NeuralNode({
@@ -71,7 +72,10 @@ export class Network {
           nodeType: node.nodeType
         })
       );
+      maxId = Math.max(maxId, node.id);
     }
+
+    network.currentNodeId = maxId;
 
     for (const connection of json.connections) {
       const from = network.nodes.find(n => n.id === connection.fromId)!;
@@ -357,6 +361,8 @@ export class Network {
       hiddenLength: this.hiddenLength,
       weightRange: this.weightRange
     });
+
+    copy.currentNodeId = this.currentNodeId;
 
     const nodesCopy = [...this.getNodes().map(node => node.clone())];
     copy.setNodes(nodesCopy);
