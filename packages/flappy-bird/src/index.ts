@@ -1,4 +1,4 @@
-import { NeatAlgo } from '../../neural-box/src';
+import { drawNeuralNetwork, NeatAlgo } from '../../neural-box/src';
 import { Network } from '../../neural-box/src';
 import { Background } from './game/Background';
 import { Base } from './game/Base';
@@ -20,6 +20,7 @@ const bestScore = document.querySelector('#best-score')!;
 const model = document.querySelector('#model') as HTMLTextAreaElement;
 const loadModelBtn = document.querySelector('#load-btn')!;
 const loadModelTextarea = document.querySelector('#model-to-load') as HTMLTextAreaElement;
+const drawing = document.querySelector('#drawing') as HTMLCanvasElement;
 
 const neat = new NeatAlgo();
 const background = new Background({
@@ -96,7 +97,9 @@ function getBestNetwork() {
  * Update the best model
  */
 function updateBestModel() {
-  model.value = JSON.stringify(getBestNetwork().toJson());
+  const network = getBestNetwork().toJson();
+  model.value = JSON.stringify(network);
+  drawNeuralNetwork(network, drawing);
 }
 
 /**

@@ -3,7 +3,7 @@ import { sigmoid } from '../utils/sigmoid';
 import { ConenctionJson, Connection } from './Connection';
 import { NeuralNode, NeuralNodeJson, NodeType } from './NeuralNode';
 
-type NetworkJson = {
+export type NetworkJson = {
   inputLength: number;
   outputLength: number;
   hiddenLength: number[];

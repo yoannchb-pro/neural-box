@@ -15,7 +15,7 @@ body {
   padding: 1rem;
 }
 
-canvas {
+main > canvas {
   border: thin solid #000;
   width: clamp(0px, 500px, 100%) !important;
   height: auto !important;
@@ -82,5 +82,5 @@ button {
 textarea {
   overflow-y: auto;
   resize: none;
-  height: 10rem;
+  height: 6rem;
 }
