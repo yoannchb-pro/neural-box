@@ -302,22 +302,22 @@ export class Network {
     const maxAttempts = this.nodes.length * this.nodes.length; // A simple upper limit based on the number of possible connections
 
     while (attemptCount < maxAttempts) {
-      const fromIndex = Math.floor(randomUniform(0, this.nodes.length));
-      const toIndex = Math.floor(randomUniform(0, this.nodes.length));
+      const nodesNoneOutputs = this.nodes.filter(n => n.nodeType !== NodeType.OUTPUT);
+      const fromIndex = Math.floor(randomUniform(0, nodesNoneOutputs.length));
+      const from = nodesNoneOutputs[fromIndex];
 
-      if (fromIndex === toIndex) {
+      const possibleTargets = this.nodes.filter(node => node.layer > from.layer);
+      if (possibleTargets.length === 0) {
         attemptCount++;
         continue;
       }
-
-      const from = this.nodes[fromIndex];
-      const to = this.nodes[toIndex];
+      const to = possibleTargets[Math.floor(randomUniform(0, possibleTargets.length))];
 
       const connectionExist = this.connections.some(
         con => con.from.id === from.id && con.to.id === to.id
       );
 
-      if (connectionExist || from.layer === to.layer) {
+      if (connectionExist) {
         attemptCount++;
         continue;
       }
@@ -327,18 +327,8 @@ export class Network {
         to,
         weightRange: this.weightRange
       });
-
-      const exists = this.connections.some(
-        connection =>
-          connection.from === randomConnection.from && connection.to === randomConnection.to
-      );
-
-      if (!exists) {
-        this.connections.push(randomConnection); // Assuming this.connections is the array holding all connections
-        return randomConnection;
-      }
-
-      attemptCount++;
+      this.connections.push(randomConnection);
+      return randomConnection;
     }
 
     throw new Error('Failed to add a new connection: too many attempts.');
