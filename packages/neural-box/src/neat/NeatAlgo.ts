@@ -1,4 +1,5 @@
 import { Network } from '../network/Network';
+import { NodeType } from '../network/NeuralNode';
 import { randomUniform } from '../utils/randomUniform';
 
 type ConstructorParams = {
@@ -7,7 +8,6 @@ type ConstructorParams = {
     newNode?: number;
     weightModification?: number;
     removeNode?: number;
-    removeConnection?: number;
     disableConnection?: number;
     enableConnection?: number;
   };
@@ -18,7 +18,6 @@ const defaultMutationsChances: Required<ConstructorParams['mutationsChances']> =
   enableConnection: 0.1,
   newConnection: 0.1,
   newNode: 0.1,
-  removeConnection: 0.1,
   removeNode: 0.1,
   weightModification: 0.9
 };
@@ -49,22 +48,19 @@ export class NeatAlgo {
       network.addRandomConnection();
     }
 
-    // Remove connection
-    if (Math.random() <= this.mutationsChances.removeConnection && connections.length > 0) {
-      const rndConnection = Math.floor(randomUniform(0, connections.length));
-      network.removeConnection(connections[rndConnection]);
-    }
-
-    // New node
+    // New hidden node
     if (Math.random() <= this.mutationsChances.newNode && connections.length > 0) {
       const rndConnection = Math.floor(randomUniform(0, connections.length));
       network.addNodeInConnection(connections[rndConnection]);
     }
 
-    // Remove node
+    // Remove hidden node
     if (Math.random() <= this.mutationsChances.removeNode && nodes.length > 0) {
-      const rndNode = Math.floor(randomUniform(0, nodes.length));
-      network.removeNode(nodes[rndNode]);
+      const removableNodes = nodes.filter(node => node.nodeType === NodeType.HIDDEN);
+      if (removableNodes.length > 0) {
+        const rndNode = Math.floor(randomUniform(0, removableNodes.length));
+        network.removeNode(removableNodes[rndNode]);
+      }
     }
 
     // Disable connection

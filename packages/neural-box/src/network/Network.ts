@@ -67,6 +67,7 @@ export class Network {
       network.nodes.push(
         new NeuralNode({
           id: node.id,
+          layer: node.layer,
           nodeType: node.nodeType
         })
       );
@@ -108,15 +109,17 @@ export class Network {
     // Input bias
     const bias = new NeuralNode({
       id: ++this.currentNodeId,
+      layer: 0,
       nodeType: NodeType.BIAS
     });
-    this.nodes.push(bias);
     nodesOfPrecedentLayer.push(bias);
+    this.nodes.push(bias);
 
     // Inputs
     for (let i = 0; i < this.inputLength; ++i) {
       const input = new NeuralNode({
         id: ++this.currentNodeId,
+        layer: 0,
         nodeType: NodeType.INPUT
       });
       nodesOfPrecedentLayer.push(input);
@@ -124,10 +127,13 @@ export class Network {
     }
 
     for (let i = 0; i < this.hiddenLayers; ++i) {
+      const layer = i + 1;
+
       const hiddenLength = this.hiddenLength[i];
       // Hidden bias
       const bias = new NeuralNode({
         id: ++this.currentNodeId,
+        layer,
         nodeType: NodeType.BIAS
       });
       const hiddenCreatedNodes: NeuralNode[] = [bias];
@@ -135,6 +141,7 @@ export class Network {
       for (let j = 0; j < hiddenLength; ++j) {
         const hidden = new NeuralNode({
           id: ++this.currentNodeId,
+          layer,
           nodeType: NodeType.HIDDEN
         });
 
@@ -158,6 +165,7 @@ export class Network {
     for (let i = 0; i < this.outputLength; ++i) {
       const output = new NeuralNode({
         id: ++this.currentNodeId,
+        layer: this.hiddenLayers + 1,
         nodeType: NodeType.OUTPUT
       });
 
@@ -247,6 +255,7 @@ export class Network {
 
     const newNode = new NeuralNode({
       id: ++this.currentNodeId,
+      layer: connection.from.layer + 1,
       nodeType: NodeType.HIDDEN
     });
 
@@ -284,9 +293,19 @@ export class Network {
         continue;
       }
 
+      const from = this.nodes[fromIndex];
+      const to = this.nodes[toIndex];
+
+      const connectionExist = this.connections.some(con => con.from === from && con.to === con.to);
+
+      if (from.layer === to.layer || connectionExist) {
+        attemptCount++;
+        continue;
+      }
+
       const randomConnection = new Connection({
-        from: this.nodes[fromIndex],
-        to: this.nodes[toIndex],
+        from,
+        to,
         weightRange: this.weightRange
       });
 

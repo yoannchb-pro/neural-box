@@ -7,17 +7,18 @@ export function drawNeuralNetwork(json: NetworkJson, canvas: HTMLCanvasElement) 
 
   const nodePositions: Record<number, { x: number; y: number }> = {};
 
-  const layers: number[][] = [];
-  const inputNodes = json.nodes.filter(n => n.nodeType === 1);
-  const hiddenNodes = json.nodes.filter(n => n.nodeType === 3);
-  const outputNodes = json.nodes.filter(n => n.nodeType === 2);
+  const inputNodes = json.nodes.filter(n => n.nodeType === NodeType.INPUT);
+  const biasNodes = json.nodes.filter(n => n.nodeType === NodeType.BIAS);
+  const hiddenNodes = json.nodes.filter(n => n.nodeType === NodeType.HIDDEN);
+  const outputNodes = json.nodes.filter(n => n.nodeType === NodeType.OUTPUT);
 
-  layers.push(inputNodes.map(n => n.id));
+  const layers: number[][] = [];
+  layers.push([...inputNodes.map(n => n.id), ...biasNodes.map(n => n.id)]);
   if (hiddenNodes.length > 0) layers.push(hiddenNodes.map(n => n.id));
   layers.push(outputNodes.map(n => n.id));
 
-  const paddingX = canvas.width * 0.1; // Marge de 10% à gauche et à droite
-  const paddingY = canvas.height * 0.1; // Marge  10% en haut et en bas
+  const paddingX = canvas.width * 0.1;
+  const paddingY = canvas.height * 0.1;
   const usableWidth = canvas.width - 2 * paddingX;
   const usableHeight = canvas.height - 2 * paddingY;
 
@@ -25,9 +26,9 @@ export function drawNeuralNetwork(json: NetworkJson, canvas: HTMLCanvasElement) 
   const maxNodes = Math.max(...layers.map(layer => layer.length));
   const spacingY = maxNodes > 1 ? usableHeight / (maxNodes - 1) : 0;
 
-  const nodeRadius = Math.max(5, Math.min(15, canvas.width / 50)); // Taille adaptative des nœuds
+  const nodeRadius = Math.max(5, Math.min(15, canvas.width / 50));
   const minLineWidth = 1;
-  const maxLineWidth = Math.max(3, canvas.width / 100); // Épaisseur max des connexions
+  const maxLineWidth = Math.max(3, canvas.width / 100);
 
   layers.forEach((layer, layerIndex) => {
     const x = paddingX + layerIndex * spacingX;
@@ -58,12 +59,13 @@ export function drawNeuralNetwork(json: NetworkJson, canvas: HTMLCanvasElement) 
 
     ctx.fillStyle =
       node.nodeType === NodeType.BIAS
-        ? 'grey'
+        ? 'grey' //
         : node.nodeType === NodeType.HIDDEN
           ? 'orange'
           : node.nodeType === NodeType.INPUT
             ? 'cyan'
             : 'yellow';
+
     ctx.beginPath();
     ctx.arc(pos.x, pos.y, nodeRadius, 0, Math.PI * 2);
     ctx.fill();
