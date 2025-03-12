@@ -191,7 +191,7 @@ speedSettings.addEventListener('click', () => {
 // Update model
 loadModelBtn.addEventListener('click', () => {
   try {
-    const networkJson = JSON.parse(loadModelTextarea.value);
+    const networkJson = JSON.parse(loadModelTextarea.value?.trim());
     loadModelTextarea.value = '';
     const network = Network.fromJson(networkJson);
     pipes.length = 0;
