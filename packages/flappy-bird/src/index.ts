@@ -42,6 +42,10 @@ const birds: Bird[] = [];
  * Init / Reset the game
  */
 function initGame(bestBirdBrain?: Network) {
+  pipes.length = 0;
+  birds.length = 0;
+  score.reset();
+
   // Set the generation and best score
   generation.textContent = String(Number(generation.textContent) + 1);
   bestScore.textContent = String(Math.max(Number(bestScore.textContent), score.getScore()));
@@ -80,8 +84,6 @@ function initGame(bestBirdBrain?: Network) {
     const bird = createBird(brain);
     birds.push(bird);
   }
-
-  score.reset();
 }
 
 /**
@@ -167,10 +169,6 @@ function game() {
   // When all birds are dead we reset the game
   if (!notAllBirdsDead) {
     const bestNetwork = getBestNetwork();
-
-    pipes.length = 0;
-    birds.length = 0;
-
     initGame(bestNetwork);
   }
 }
@@ -193,9 +191,8 @@ loadModelBtn.addEventListener('click', () => {
   try {
     const networkJson = JSON.parse(loadModelTextarea.value?.trim());
     loadModelTextarea.value = '';
+
     const network = Network.fromJson(networkJson);
-    pipes.length = 0;
-    birds.length = 0;
     initGame(network);
   } catch (e: any) {
     console.error(e);
